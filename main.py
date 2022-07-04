@@ -30,20 +30,6 @@ async def on_startup():
     print(f"This bot is owned by {bot.owner}")
 
 
-acceptdeny = [
-    Button(
-        custom_id="startbattle",
-        style=ButtonStyles.GREEN,
-        label="Fight⚔",
-    ),
-    Button(
-        custom_id="denyrequest",
-        style=ButtonStyles.RED,
-        label="Deny❌",
-    ),
-]
-
-
 @slash_command(name="challenge")
 @slash_option(
     name="oponent",
@@ -52,40 +38,59 @@ acceptdeny = [
     required=True,
 )
 async def challenge_user(ctx: InteractionContext, oponent: Member.user):
-    acceptdeny = [
-        Button(
-            custom_id="startbattle",
-            style=ButtonStyles.GREEN,
-            label="Fight⚔",
-        ),
-        Button(
-            custom_id="denyrequest",
-            style=ButtonStyles.RED,
-            label="Deny❌",
-        ),
-    ]
-    await ctx.send(
-        f"{oponent.user.mention}, you have been challenged by {ctx.author.mention}",
-        components=acceptdeny,
+    button1 = Button(
+        style=ButtonStyles.GREEN,
+        label="Fight⚔",
+    )
+    button2 = Button(
+        style=ButtonStyles.RED,
+        label="Deny❌",
     )
 
+    message = await ctx.send(
+        f"{oponent.user.mention}, you have been challenged by {ctx.author.mention}",
+        components=[button1, button2],
+    )
 
-@listen()
-async def on_component(event: components):
-    ctx = event.context
+    async def checktrue(component: button1) -> bool:
+        global pressedfight
+        pressedfight = True
+        global username
+        username = component.context.author.mention
+        return component.context.author
 
-    match ctx.custom_id:
-        case "startbattle":
-            await ctx.send("Battle started.")
+    async def checkfalse(component: button2) -> bool:
+        global pressedfight
+        pressedfight = False
+        global username
+        username = component.context.author.mention
+        return component.context.author
 
+    try:
+        # you need to pass the component you want to listen for here
+        # you can also pass an ActionRow, or a list of ActionRows. Then a press on any component in there will be listened for
+        truecomponent = await bot.wait_for_component(
+            components=button1, check=checktrue, timeout=30
+        )
+        falsecomponent = await bot.wait_for_component(
+            components=button2, check=checkfalse, timeout=30
+        )
 
-@listen()
-async def on_component(event: components):
-    ctx = event.context
+    except TimeoutError:
+        await ctx.send("Request timed out!")
 
-    match ctx.custom_id:
-        case "denyrequest":
-            await ctx.send("Battle denied.")
+        button1.disabled = True
+        button2.disabled = True
+        await message.edit(components=[button1, button2])
+
+    else:
+        if pressedfight == True:
+            await truecomponent.context.send(f"Yep, {username} accepted your challenge.")
+        elif pressedfight == False:
+            await falsecomponent.context.send(f"Nope, {username} denied your challenge.")
+        button1.disabled = True
+        button2.disabled = True
+        await message.edit(components=[button1, button2])
 
 
 load_dotenv()
