@@ -10,10 +10,13 @@ from naff import (
     CommandTypes,
     slash_command,
     slash_option,
+    component_callback,
+    ComponentContext,
     OptionTypes,
     InteractionContext,
     context_menu,
     listen,
+    components,
     Member,
 )
 from dotenv import load_dotenv
@@ -27,15 +30,62 @@ async def on_startup():
     print(f"This bot is owned by {bot.owner}")
 
 
+acceptdeny = [
+    Button(
+        custom_id="startbattle",
+        style=ButtonStyles.GREEN,
+        label="Fight⚔",
+    ),
+    Button(
+        custom_id="denyrequest",
+        style=ButtonStyles.RED,
+        label="Deny❌",
+    ),
+]
+
+
 @slash_command(name="challenge")
 @slash_option(
-    name="challenge",
+    name="oponent",
     description="Challenge someone to a battle!",
     opt_type=OptionTypes.USER,
     required=True,
 )
 async def challenge_user(ctx: InteractionContext, oponent: Member.user):
-    await ctx.send(f"{oponent.user.mention}, you have been challenged by {ctx.author.mention}")
+    acceptdeny = [
+        Button(
+            custom_id="startbattle",
+            style=ButtonStyles.GREEN,
+            label="Fight⚔",
+        ),
+        Button(
+            custom_id="denyrequest",
+            style=ButtonStyles.RED,
+            label="Deny❌",
+        ),
+    ]
+    await ctx.send(
+        f"{oponent.user.mention}, you have been challenged by {ctx.author.mention}",
+        components=acceptdeny,
+    )
+
+
+@listen()
+async def on_component(event: components):
+    ctx = event.context
+
+    match ctx.custom_id:
+        case "startbattle":
+            await ctx.send("Battle started.")
+
+
+@listen()
+async def on_component(event: components):
+    ctx = event.context
+
+    match ctx.custom_id:
+        case "denyrequest":
+            await ctx.send("Battle denied.")
 
 
 load_dotenv()
