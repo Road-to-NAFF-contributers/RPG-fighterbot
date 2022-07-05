@@ -4,31 +4,28 @@
 import os
 import naff
 from naff import (
+    ActionRow,
     Client,
     Button,
     ButtonStyles,
-    CommandTypes,
     slash_command,
     slash_option,
     component_callback,
     ComponentContext,
     OptionTypes,
     InteractionContext,
-    context_menu,
     listen,
-    components,
     Member,
+    spread_to_rows,
 )
 from dotenv import load_dotenv
 
 bot = Client(sync_interactions=True)
 
-
 @listen()
 async def on_startup():
     print("Ready")
     print(f"This bot is owned by {bot.owner}")
-
 
 @slash_command(name="challenge")
 @slash_option(
@@ -38,60 +35,31 @@ async def on_startup():
     required=True,
 )
 async def challenge_user(ctx: InteractionContext, oponent: Member.user):
-    button1 = Button(
-        style=ButtonStyles.GREEN,
-        label="Fight⚔",
+    mycomponents: list[ActionRow] = spread_to_rows(
+        # TODO: Add a custom emoji
+        Button(
+            custom_id="fight_button",
+            style=ButtonStyles.GREEN,
+            label="Fight🗡",
+        ),
+        Button(
+            custom_id="deny_button",
+            style=ButtonStyles.RED,
+            label="Deny❌",
+        ),
     )
-    button2 = Button(
-        style=ButtonStyles.RED,
-        label="Deny❌",
-    )
 
-    message = await ctx.send(
-        f"{oponent.user.mention}, you have been challenged by {ctx.author.mention}",
-        components=[button1, button2],
-    )
+    message = await ctx.send(f"{oponent.user.mention}, you have been challenged by {ctx.author.mention}", components=mycomponents)
 
-    async def checktrue(component: button1) -> bool:
-        global pressedfight
-        pressedfight = True
-        global username
-        username = component.context.author.mention
-        return component.context.author
+#Fight button event callback
+@component_callback("fight_button")
+async def click_fight(ctx: ComponentContext):
+    await ctx.send(f"{ctx.author.mention} has accepted the challenge!")
 
-    async def checkfalse(component: button2) -> bool:
-        global pressedfight
-        pressedfight = False
-        global username
-        username = component.context.author.mention
-        return component.context.author
-
-    try:
-        # you need to pass the component you want to listen for here
-        # you can also pass an ActionRow, or a list of ActionRows. Then a press on any component in there will be listened for
-        truecomponent = await bot.wait_for_component(
-            components=button1, check=checktrue, timeout=30
-        )
-        falsecomponent = await bot.wait_for_component(
-            components=button2, check=checkfalse, timeout=30
-        )
-
-    except TimeoutError:
-        await ctx.send("Request timed out!")
-
-        button1.disabled = True
-        button2.disabled = True
-        await message.edit(components=[button1, button2])
-
-    else:
-        if pressedfight == True:
-            await truecomponent.context.send(f"Yep, {username} accepted your challenge.")
-        elif pressedfight == False:
-            await falsecomponent.context.send(f"Nope, {username} denied your challenge.")
-        button1.disabled = True
-        button2.disabled = True
-        await message.edit(components=[button1, button2])
-
+#Deny button event callback
+@component_callback("deny_button")
+async def click_deny(ctx: ComponentContext):
+    await ctx.send(f"{ctx.author.mention} has denied the challenge!")
 
 load_dotenv()
 bot_TOKEN = os.environ["TOKEN"]
