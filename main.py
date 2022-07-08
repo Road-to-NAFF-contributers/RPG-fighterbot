@@ -60,6 +60,8 @@ async def on_component(event: ComponentContext):
         await ctx.send("This is not your button!", ephemeral=True)
         return
     else:
+        # await ctx.message.edit(content="Edited message", components=None)
+
         if ctx.custom_id.startswith("fight_button"):
             await ctx.send(f"{ctx.author.mention} has accepted the challenge!")
         elif ctx.custom_id.startswith("deny_button"):
