@@ -2,6 +2,7 @@
 # pip install git+https://github.com/NAFTeam/NAFF@dev
 
 import os
+from syslog import setlogmask
 import naff
 from naff import (
     ActionRow,
@@ -16,15 +17,19 @@ from naff import (
     listen,
     Member,
     spread_to_rows,
+    Extension,
 )
 from dotenv import load_dotenv
 
 bot = Client(sync_interactions=True)
 
+
 @listen()
 async def on_startup():
     print("Ready")
     print(f"This bot is owned by {bot.owner}")
+    bot.load_extension("extensioncommands")
+
 
 @slash_command(name="challenge")
 @slash_option(
@@ -34,6 +39,7 @@ async def on_startup():
     required=True,
 )
 async def challenge_user(ctx: InteractionContext, oponent: Member.user):
+    global mycomponents
     mycomponents: list[ActionRow] = spread_to_rows(
         # TODO: Add a custom emoji
         Button(
@@ -48,15 +54,19 @@ async def challenge_user(ctx: InteractionContext, oponent: Member.user):
         ),
     )
 
-    message = await ctx.send(f"{oponent.user.mention}, you have been challenged by {ctx.author.mention}", components=mycomponents)
+    message = await ctx.send(
+        f"{oponent.user.mention}, you have been challenged by {ctx.author.mention}",
+        components=mycomponents,
+    )
+
 
 @listen()
 async def on_component(event: ComponentContext):
-    #Gets the Event.context of the button click
+    # Gets the Event.context of the button click
     ctx = event.context
 
-    #Checks whether the button was the button of who was challenged
-    if (not ctx.custom_id.endswith(f"{ctx.author.id}")):
+    # Checks whether the button was the button of who was challenged
+    if not ctx.custom_id.endswith(f"{ctx.author.id}"):
         await ctx.send("This is not your button!", ephemeral=True)
         return
     else:
@@ -66,6 +76,9 @@ async def on_component(event: ComponentContext):
             await ctx.send(f"{ctx.author.mention} has accepted the challenge!")
         elif ctx.custom_id.startswith("deny_button"):
             await ctx.send(f"{ctx.author.mention} has denied the challenge!")
+
+        mycomponents[0].components[0].disabled = True
+
 
 load_dotenv()
 bot_TOKEN = os.environ["TOKEN"]
