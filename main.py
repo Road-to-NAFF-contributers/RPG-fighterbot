@@ -26,7 +26,7 @@ from naff import (
 )
 
 # Create a new instance of the Client
-bot = Client(sync_interactions=True)
+bot = Client(sync_interactions=True, send_command_tracebacks=False)
 
 # Ran when the bot is ready
 @listen()
@@ -75,22 +75,17 @@ async def on_component(event: ComponentContext):
         await ctx.send("This is not your button!", ephemeral=True)
         return
     else:
-        # await ctx.message.edit(content="Edited message", components=None)
-
+        # Checks whether the button was the fight or deny button
         if ctx.custom_id.startswith("fight_button"):
             await ctx.send(f"{ctx.author.mention} has accepted the challenge!")
         elif ctx.custom_id.startswith("deny_button"):
             await ctx.send(f"{ctx.author.mention} has denied the challenge!")
 
-        #TODO: disable components when either is selected
-
-        # await ctx.message.delete()
+        # Disables components (aka the buttons)
         for row in ctx.message.components:
             for component in row.components:
                 component.disabled = True
         await ctx.message.edit(components=ctx.message.components)
-
-        # mycomponents[0].components[0].disabled = True
 
 # Load all modules, from a JSON file, for convenience
 with open('modules.json', 'r') as file:

@@ -33,24 +33,24 @@ class info_commands(Extension):
         opt_type=OptionTypes.USER,
         required=False,
     )
-    async def spotify(self, ctx: InteractionContext, user: Member.user):
-        # My life be like :bruh:
-        listener = ctx.author if not user else user
+    async def spotify(self, ctx: InteractionContext, user: Member.user = None):
+        listener = user or ctx.author
         
-        if listener.activities:
-            for activity in listener.activities:
-                if activity.name == "Spotify":
-                    cover = f"https://i.scdn.co/image/{activity.assets.large_image.split(':')[1]}"
-                    embed = Embed(
-                        title=f"{listener.display_name}'s Spotify",
-                        description="Listening to {}".format(activity.details),
-                        color="#36b357",
-                    )
-                    #SUGGESTION: instead of "set_thumbnail", use "thumbnail=" in the Embed constructor
-                    embed.set_thumbnail(url=cover)
-                    embed.add_field(name="Artist", value=activity.state)
-                    embed.add_field(name="Album", value=activity.assets.large_text)
-                    await ctx.send(embeds=embed)
+        #Get the first activity that contains "Spotify". Return None, if none present.
+        spotify_activity = next((x for x in listener.activities if x == "Spotify"), None)
+
+        if spotify_activity != None:
+            cover = f"https://i.scdn.co/image/{spotify_activity.assets.large_image.split(':')[1]}"
+            embed = Embed(
+                title=f"{listener.display_name}'s Spotify",
+                description="Listening to {}".format(spotify_activity.details),
+                color="#36b357",
+            )
+            #SUGGESTION: instead of "set_thumbnail", use "thumbnail=" in the Embed constructor
+            embed.set_thumbnail(url=cover)
+            embed.add_field(name="Artist", value=spotify_activity.state)
+            embed.add_field(name="Album", value=spotify_activity.assets.large_text)
+            await ctx.send(embeds=embed)
         else:
             embed = Embed(
                 title=f"{listener.display_name}'s Spotify",
