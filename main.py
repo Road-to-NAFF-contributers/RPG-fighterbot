@@ -85,7 +85,10 @@ async def on_component(event: ComponentContext):
         #TODO: disable components when either is selected
 
         # await ctx.message.delete()
-        # ctx.message.components[0].disabled = True
+        for row in ctx.message.components:
+            for component in row.components:
+                component.disabled = True
+        await ctx.message.edit(components=ctx.message.components)
 
         # mycomponents[0].components[0].disabled = True
 
@@ -100,5 +103,5 @@ with open('modules.json', 'r') as file:
 load_dotenv()
 
 # Start the bot
-bot_TOKEN = os.environ["TOKEN"]
+bot_TOKEN = os.environ["TEST_TOKEN"]
 bot.start(bot_TOKEN)
