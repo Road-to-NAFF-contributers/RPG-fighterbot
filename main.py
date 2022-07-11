@@ -103,5 +103,5 @@ with open('modules.json', 'r') as file:
 load_dotenv()
 
 # Start the bot
-bot_TOKEN = os.environ["TEST_TOKEN"]
+bot_TOKEN = os.environ["TOKEN"]
 bot.start(bot_TOKEN)
