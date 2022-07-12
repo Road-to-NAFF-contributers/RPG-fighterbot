@@ -1,14 +1,15 @@
 # Import NAFF
 from naff import (
     Colour,
-    Embed, 
-    Extension, 
+    Embed,
+    Extension,
     InteractionContext,
     Member,
-    OptionTypes, 
+    OptionTypes,
     slash_command,
-    slash_option
+    slash_option,
 )
+
 
 class info_commands(Extension):
     # Info commands
@@ -16,12 +17,25 @@ class info_commands(Extension):
     async def info(self, ctx: InteractionContext):
         embed = Embed(
             title="Info",
-            description="This bot is indev and we are making this lol.",
+            description="A rpg arcade battle simulator(indev) made using the NAFF api wrapper.",
             color="#3498db",
         )
+        embed.add_field(name="Created by:", value=f"@Larss_J#0001\n @MeowTheMost#0273")
+        embed.add_field(
+            name="Official github repository:",
+            value="[Repo👨‍💻](https://github.com/Road-to-NAFF-contributers/RPG-fighterbot)",
+        )
+        embed.add_field(
+            name="NAFF api wrapper",
+            value="[Wrapper🐍](https://github.com/Road-to-NAFF-contributers/RPG-fighterbot)",
+        )
+        embed.add_field(
+            name="Official testing/development server:",
+            value="[Invite👾](https://discord.gg/TReMEyBQsh)",
+        )
 
-        await ctx.send(embed=embed)
-    
+        await ctx.send(embeds=embed)
+
     # TODO: help command!
     # @slash_command(name="help")
 
@@ -35,8 +49,8 @@ class info_commands(Extension):
     )
     async def spotify(self, ctx: InteractionContext, user: Member.user = None):
         listener = user or ctx.author
-        
-        #Get the first activity that contains "Spotify". Return None, if none present.
+
+        # Get the first activity that contains "Spotify". Return None, if none present.
         spotify_activity = next((x for x in listener.activities if x == "Spotify"), None)
 
         if spotify_activity != None:
@@ -46,7 +60,7 @@ class info_commands(Extension):
                 description="Listening to {}".format(spotify_activity.details),
                 color="#36b357",
             )
-            #SUGGESTION: instead of "set_thumbnail", use "thumbnail=" in the Embed constructor
+            # SUGGESTION: instead of "set_thumbnail", use "thumbnail=" in the Embed constructor
             embed.set_thumbnail(url=cover)
             embed.add_field(name="Artist", value=spotify_activity.state)
             embed.add_field(name="Album", value=spotify_activity.assets.large_text)
@@ -63,6 +77,7 @@ class info_commands(Extension):
     # Init function - runs when the extension is loaded
     # def __init__(self, bot):
     #     print("Extension loaded")
+
 
 # This is called by NAFF, to determine how to load the Extension
 def setup(bot):
