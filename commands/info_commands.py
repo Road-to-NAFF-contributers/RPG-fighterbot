@@ -51,7 +51,7 @@ class info_commands(Extension):
         listener = user or ctx.author
 
         # Get the first activity that contains "Spotify". Return None, if none present.
-        spotify_activity = next((x for x in listener.activities if x == "Spotify"), None)
+        spotify_activity = next((x for x in listener.activities if x.name == "Spotify"), None)
 
         if spotify_activity != None:
             cover = f"https://i.scdn.co/image/{spotify_activity.assets.large_image.split(':')[1]}"

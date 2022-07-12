@@ -11,6 +11,7 @@ from naff import (
     Client,
     Button,
     ButtonStyles,
+    Intents,
     slash_command,
     slash_option,
     ComponentContext,
@@ -22,8 +23,11 @@ from naff import (
     Extension,
 )
 
+# Intents for the bot
+bot_intents: Intents = (Intents.GUILD_PRESENCES | Intents.DEFAULT)
+
 # Create a new instance of the Client
-bot = Client(sync_interactions=True, send_command_tracebacks=False)
+bot = Client(intents=bot_intents, sync_interactions=True, send_command_tracebacks=False)
 
 # Ran when the bot is ready
 @listen()
