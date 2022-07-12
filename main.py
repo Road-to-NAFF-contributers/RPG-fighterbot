@@ -3,9 +3,6 @@
 
 import os
 import json
-
-#whar does this do? Whar is "setlogmask"?
-from syslog import setlogmask
 from dotenv import load_dotenv
 
 # Import NAFF
@@ -34,7 +31,8 @@ async def on_startup():
     print("Ready")
     print(f"This bot is owned by {bot.owner}")
 
-#TODO: move this code into its own file!
+
+# TODO: move this code into its own file!
 @slash_command(name="challenge")
 @slash_option(
     name="oponent",
@@ -64,7 +62,7 @@ async def challenge_user(ctx: InteractionContext, oponent: Member.user):
     )
 
 
-#TODO: consider doing something with this, idk...?
+# TODO: consider doing something with this, idk...?
 @listen()
 async def on_component(event: ComponentContext):
     # Gets the Event.context of the button click
@@ -87,8 +85,9 @@ async def on_component(event: ComponentContext):
                 component.disabled = True
         await ctx.message.edit(components=ctx.message.components)
 
+
 # Load all modules, from a JSON file, for convenience
-with open('modules.json', 'r') as file:
+with open("modules.json", "r") as file:
     data = json.load(file)
 
     for extension in data["extensions"]:
