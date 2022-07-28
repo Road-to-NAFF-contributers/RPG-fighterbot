@@ -23,6 +23,8 @@ from naff import (
     Extension,
 )
 
+import commands.fight_sim as fight_sim
+
 # Intents for the bot
 bot_intents: Intents = (Intents.GUILD_PRESENCES | Intents.DEFAULT)
 
@@ -41,22 +43,36 @@ async def on_component(event: ComponentContext):
     # Gets the Event.context of the button click
     ctx = event.context
 
-    # Checks whether the button was the button of who was challenged
-    if not ctx.custom_id.endswith(f"{ctx.author.id}"):
-        await ctx.send("This is not your button!", ephemeral=True)
-        return
-    else:
-        # Checks whether the button was the fight or deny button
-        if ctx.custom_id.startswith("fight_button"):
-            await ctx.send(f"{ctx.author.mention} has accepted the challenge!")
-        elif ctx.custom_id.startswith("deny_button"):
-            await ctx.send(f"{ctx.author.mention} has denied the challenge!")
+    # TODO: move into its own module
+    # Fight, handled in a seperate module
+    if ctx.custom_id.startswith("fight-button") or ctx.custom_id.startswith("deny-button"):
+        # Gets the custom_id of the button click
+        custom_id = int(ctx.custom_id.split("_")[1])
+        # print(custom_id)
+        
+        # print(fight_sim.challenged_users[0])
+        # print(fight_sim.challenges[custom_id]["Challenger"])
 
-        # Disables components (aka the buttons)
-        for row in ctx.message.components:
-            for component in row.components:
-                component.disabled = True
-        await ctx.message.edit(components=ctx.message.components)
+        if fight_sim.challenges[custom_id]["Challenged"] == ctx.author.id:
+            # This is your button!
+            if ctx.custom_id.startswith("fight-button"):
+                await ctx.send(f"{ctx.author.mention} has accepted the challenge!")
+            elif ctx.custom_id.startswith("deny-button"):
+                await ctx.send(f"{ctx.author.mention} has denied the challenge!")
+                return
+                #TODO: remove from list and return
+        elif fight_sim.challenges[custom_id]["Challenger"] == ctx.author.id:
+            await ctx.send(f"You cannot accept your own challenge. Are you some dummy?", ephemeral=True)
+            return
+        else:
+            await ctx.send(f"This is not your button!", ephemeral=True)
+            return
+    
+    # Disables components (aka the buttons)
+    for row in ctx.message.components:
+        for component in row.components:
+            component.disabled = True
+    await ctx.message.edit(components=ctx.message.components)
 
 
 # Load all modules, from a JSON file, for convenience

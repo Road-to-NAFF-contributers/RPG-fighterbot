@@ -1,6 +1,6 @@
 {
     "extensions":[
         "commands.info_commands",
-        "commands.fight-sim"
+        "commands.fight_sim"
     ]
 }
