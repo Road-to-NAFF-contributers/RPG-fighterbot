@@ -7,20 +7,10 @@ from dotenv import load_dotenv
 
 # Import NAFF
 from naff import (
-    ActionRow,
     Client,
-    Button,
-    ButtonStyles,
     Intents,
-    slash_command,
-    slash_option,
     ComponentContext,
-    OptionTypes,
-    InteractionContext,
     listen,
-    Member,
-    spread_to_rows,
-    Extension,
 )
 
 import commands.fight_sim as fight_sim
@@ -48,19 +38,24 @@ async def on_component(event: ComponentContext):
     if ctx.custom_id.startswith("fight-button") or ctx.custom_id.startswith("deny-button"):
         # Gets the custom_id of the button click
         custom_id = int(ctx.custom_id.split("_")[1])
-        # print(custom_id)
         
-        # print(fight_sim.challenged_users[0])
-        # print(fight_sim.challenges[custom_id]["Challenger"])
+        def remove():
+            # Remove from list
+            # ok i agree this is absolute shit code (shall be refactored soon)
+            fight_sim.challenged_users.remove(fight_sim.challenges[custom_id]["Challenged"])
+            fight_sim.challenged_users.remove(ctx.author.id)
+            fight_sim.challenges.pop(custom_id)
 
         if fight_sim.challenges[custom_id]["Challenged"] == ctx.author.id:
-            # This is your button!
+            # This is your button! 
             if ctx.custom_id.startswith("fight-button"):
                 await ctx.send(f"{ctx.author.mention} has accepted the challenge!")
+                remove()
             elif ctx.custom_id.startswith("deny-button"):
                 await ctx.send(f"{ctx.author.mention} has denied the challenge!")
+                remove()
                 return
-                #TODO: remove from list and return
+
         elif fight_sim.challenges[custom_id]["Challenger"] == ctx.author.id:
             await ctx.send(f"You cannot accept your own challenge. Are you some dummy?", ephemeral=True)
             return
