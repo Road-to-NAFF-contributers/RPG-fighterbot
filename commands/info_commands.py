@@ -75,8 +75,8 @@ class info_commands(Extension):
             await ctx.send(embeds=embed)
 
     # Init function - runs when the extension is loaded
-    # def __init__(self, bot):
-    #     print("Extension loaded")
+    def __init__(self, bot):
+        print(f"Extension {self.name} loaded")
 
 
 # This is called by NAFF, to determine how to load the Extension
