@@ -16,7 +16,7 @@ from naff import (
 import commands.fight_sim as fight_sim
 
 # Intents for the bot
-bot_intents: Intents = (Intents.GUILD_PRESENCES | Intents.DEFAULT)
+bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT
 
 # Create a new instance of the Client
 bot = Client(intents=bot_intents, sync_interactions=True, send_command_tracebacks=False)
@@ -26,6 +26,7 @@ bot = Client(intents=bot_intents, sync_interactions=True, send_command_traceback
 async def on_startup():
     print("Ready")
     print(f"This bot is owned by {bot.owner}")
+
 
 # TODO: consider doing something with this, idk...?
 @listen()
@@ -38,7 +39,7 @@ async def on_component(event: ComponentContext):
     if ctx.custom_id.startswith("fight-button") or ctx.custom_id.startswith("deny-button"):
         # Gets the custom_id of the button click
         custom_id = int(ctx.custom_id.split("_")[1])
-        
+
         def remove():
             # Remove from list
             # ok i agree this is absolute shit code (shall be refactored soon)
@@ -47,22 +48,26 @@ async def on_component(event: ComponentContext):
             fight_sim.challenges.pop(custom_id)
 
         if fight_sim.challenges[custom_id]["Challenged"] == ctx.author.id:
-            # This is your button! 
+            # This is your button!
             if ctx.custom_id.startswith("fight-button"):
                 await ctx.send(f"{ctx.author.mention} has accepted the challenge!")
                 remove()
+                # trigger a function in file "fight_sim.py"
+                fight_sim.battle(ctx.author)
             elif ctx.custom_id.startswith("deny-button"):
                 await ctx.send(f"{ctx.author.mention} has denied the challenge!")
                 remove()
                 return
 
         elif fight_sim.challenges[custom_id]["Challenger"] == ctx.author.id:
-            await ctx.send(f"You cannot accept your own challenge. Are you some dummy?", ephemeral=True)
+            await ctx.send(
+                f"You cannot accept your own challenge. Are you some dummy?", ephemeral=True
+            )
             return
         else:
             await ctx.send(f"This is not your button!", ephemeral=True)
             return
-    
+
     # Disables components (aka the buttons)
     for row in ctx.message.components:
         for component in row.components:

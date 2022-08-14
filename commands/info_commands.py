@@ -20,13 +20,13 @@ class info_commands(Extension):
             description="A rpg arcade battle simulator(indev) made using the NAFF api wrapper.",
             color="#3498db",
         )
-        embed.add_field(name="Created by:", value=f"@Larss_J#0001\n @MeowTheMost#0273")
+        embed.add_field(name="Created by:", value=f"Larss_J#8982\nMeowTheMost#0273")
         embed.add_field(
             name="Official github repository:",
             value="[Repo👨‍💻](https://github.com/Road-to-NAFF-contributers/RPG-fighterbot)",
         )
         embed.add_field(
-            name="NAFF api wrapper",
+            name="NAFF api wrapper:",
             value="[Wrapper🐍](https://github.com/Road-to-NAFF-contributers/RPG-fighterbot)",
         )
         embed.add_field(
