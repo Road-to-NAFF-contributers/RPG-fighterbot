@@ -85,7 +85,9 @@ class fighter(Extension):
         mycomponents: list[ActionRow] = spread_to_rows(btn1, btn2, btn3)
 
         embed = naff.Embed(title="Battle", description="player1 against player2", color=0x4969E9)
-        embed.set_footer(text="Player 1 turn")
+        embed.set_footer(
+            text="Succesfully challenged (this is still in development. Please be patient!)"
+        )
         await channel.send(embed=embed, components=mycomponents)
 
     # TODO: consider doing something with this, idk...?
