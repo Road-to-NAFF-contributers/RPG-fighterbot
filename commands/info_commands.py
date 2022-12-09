@@ -10,7 +10,7 @@ from naff import (
     slash_option,
 )
 
-bot_version = "1.1.0"
+bot_version = "1.1.1"
 
 
 class info_commands(Extension):
