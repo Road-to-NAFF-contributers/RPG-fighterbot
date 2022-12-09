@@ -11,6 +11,8 @@ from naff import (
     slash_option,
     spread_to_rows,
     embed,
+    listen,
+    ComponentContext,
 )
 import naff
 
@@ -85,6 +87,52 @@ class fighter(Extension):
         embed = naff.Embed(title="Battle", description="player1 against player2", color=0x4969E9)
         embed.set_footer(text="Player 1 turn")
         await channel.send(embed=embed, components=mycomponents)
+
+    # TODO: consider doing something with this, idk...?
+    @listen()
+    async def on_component(event: ComponentContext):
+        # Gets the Event.context of the button click
+        ctx = event.ctx
+
+        # TODO: move into its own module
+        # Fight, handled in a seperate module
+        if ctx.custom_id.startswith("fight-button") or ctx.custom_id.startswith("deny-button"):
+            # Gets the custom_id of the button click
+            custom_id = int(ctx.custom_id.split("_")[1])
+
+            def remove():
+                # Remove from list
+                # ok i agree this is absolute shit code (shall be refactored soon)
+                challenged_users.remove(challenges[custom_id]["Challenged"])
+                challenged_users.remove(ctx.author.id)
+                challenges.pop(custom_id)
+
+            if challenges[custom_id]["Challenged"] == ctx.author.id:
+                # This is your button!
+                if ctx.custom_id.startswith("fight-button"):
+                    await ctx.send(f"{ctx.author.mention} has accepted the challenge!")
+                    remove()
+                    # trigger a function in file "fight_sim.py"
+                    battle(ctx.author)
+                elif ctx.custom_id.startswith("deny-button"):
+                    await ctx.send(f"{ctx.author.mention} has denied the challenge!")
+                    remove()
+                    return
+
+            elif challenges[custom_id]["Challenger"] == ctx.author.id:
+                await ctx.send(
+                    f"You cannot accept your own challenge. Are you some dummy?", ephemeral=True
+                )
+                return
+            else:
+                await ctx.send(f"This is not your button!", ephemeral=True)
+                return
+
+        # Disables components (aka the buttons)
+        for row in ctx.message.components:
+            for component in row.components:
+                component.disabled = True
+        await ctx.message.edit(components=ctx.message.components)
 
 
 # This is called by NAFF, to determine how to load the Extension
