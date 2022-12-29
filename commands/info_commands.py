@@ -1,19 +1,12 @@
 # Import NAFF
-from naff import (
-    Colour,
-    Embed,
-    Extension,
-    InteractionContext,
-    Member,
-    OptionTypes,
-    slash_command,
-    slash_option,
-)
+from naff import *
+
+from utils.custom_extension import CustomExtension
 
 bot_version = "1.1.1"
 
 
-class info_commands(Extension):
+class info_commands(CustomExtension):
     # Info commands
     @slash_command(name="info", description="Some basic info about the bot")
     async def info(self, ctx: InteractionContext):
@@ -43,10 +36,6 @@ class info_commands(Extension):
 
     # TODO: help command!
     # @slash_command(name="help")
-
-    # Init function - runs when the extension is loaded
-    def __init__(self, bot):
-        print(f"Extension {self.name} loaded")
 
 
 # This is called by NAFF, to determine how to load the Extension

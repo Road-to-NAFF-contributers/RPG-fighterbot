@@ -1,7 +1,10 @@
-# Bot made by using NAFF
-# pip install git+https://github.com/NAFTeam/NAFF@dev
+# Bot made with the NAFF Discord-Bot API Wrapper
 
-from keep_alive import keep_alive as kp
+# pip install git+https://github.com/NAFTeam/NAFF@dev
+#   or if that doesn't work:
+# python3 -m pip install naff
+
+from utils.keep_alive import keep_alive as kp
 
 kp()
 
@@ -10,7 +13,10 @@ import json
 from dotenv import load_dotenv
 
 # Import NAFF
-from naff import Client, Intents, ComponentContext, listen, Activity, Status, ActivityType
+from naff import *
+
+### INFO: I changed it to `from naff import *` I dont think star imports will cause any issues in this scenario.
+# from naff import Client, Intents, ComponentContext, listen, Activity, Status, ActivityType
 
 import commands.fight_sim as fight_sim
 
