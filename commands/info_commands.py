@@ -1,9 +1,23 @@
 # Import NAFF
-from naff import *
+from interactions import (
+    ActionRow,
+    Button,
+    ButtonStyle,
+    Extension,
+    InteractionContext,
+    Member,
+    OptionType,
+    slash_command,
+    slash_option,
+    spread_to_rows,
+    Embed,
+    listen,
+    ComponentContext,
+)
 
 from utils.custom_extension import CustomExtension
 
-bot_version = "1.1.1"
+bot_version = "2.0 beta"
 
 
 class info_commands(CustomExtension):
@@ -12,7 +26,7 @@ class info_commands(CustomExtension):
     async def info(self, ctx: InteractionContext):
         embed = Embed(
             title="Info",
-            description="A rpg arcade battle simulator(indev) made using the NAFF api wrapper.",
+            description="A rpg arcade battle simulator(indev) made using the interactions v5 (NAFF got deprecated 💀) api wrapper.",
             color="#3498db",
         )
         embed.add_field(name="Bot version:", value=f"> {bot_version}", inline=True)
@@ -22,10 +36,6 @@ class info_commands(CustomExtension):
         embed.add_field(
             name="Official github repository:",
             value="> [Repo👨‍💻](https://github.com/Road-to-NAFF-contributers/RPG-fighterbot)",
-        )
-        embed.add_field(
-            name="NAFF api wrapper:",
-            value="> [Wrapper🐍](https://github.com/Road-to-NAFF-contributers/RPG-fighterbot)",
         )
         embed.add_field(
             name="Official testing/development server:",
