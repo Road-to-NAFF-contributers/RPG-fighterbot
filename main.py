@@ -1,8 +1,6 @@
-# Bot made with the NAFF Discord-Bot API Wrapper
+# Bot made with the interactions v5 (NAFF has been deprecated) Discord-Bot API Wrapper
 
-# pip install git+https://github.com/NAFTeam/NAFF@dev
-#   or if that doesn't work:
-# python3 -m pip install naff
+# pip install -U discord-py-interactions
 
 from utils.keep_alive import keep_alive as kp
 
@@ -12,11 +10,19 @@ import os
 import json
 from dotenv import load_dotenv
 
-# Import NAFF
-from naff import *
-
-### INFO: I changed it to `from naff import *` I dont think star imports will cause any issues in this scenario.
-# from naff import Client, Intents, ComponentContext, listen, Activity, Status, ActivityType
+# Import interactions
+from interactions import (
+    Client,
+    listen,
+    slash_command,
+    OptionType,
+    InteractionType,
+    Intents,
+    Activity,
+    ActivityType,
+    Status,
+)
+import interactions as inter  # deal with it AR :P
 
 import commands.fight_sim as fight_sim
 
@@ -26,6 +32,7 @@ bot_intents: Intents = Intents.GUILD_PRESENCES | Intents.DEFAULT
 # Create a new instance of the Client
 bot = Client(intents=bot_intents, sync_interactions=True, send_command_tracebacks=False)
 
+challengeid = 0
 
 # Ran when the bot is ready
 @listen()
