@@ -2,9 +2,9 @@
 
 # pip install -U discord-py-interactions
 
-from utils.keep_alive import keep_alive as kp
+from utils.keep_alive import start
 
-kp()
+start()
 
 import os
 import json
