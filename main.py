@@ -41,7 +41,7 @@ async def on_startup():
     print(f"This bot is owned by {bot.owner}")
     await bot.change_presence(
         activity=Activity(
-            name="Larss_J and FlopTheMost struggle with this bots development",
+            name="Larss_J and _AR struggle with this bots development",
             type=ActivityType.WATCHING,
         ),
         status=Status.IDLE,

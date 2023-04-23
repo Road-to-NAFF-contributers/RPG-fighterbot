@@ -35,7 +35,7 @@ class fighter(CustomExtension):
     # Create challenges dictionary to store all challenges
     # [fight button id, deny button id, challenger id, challenged id]
 
-    @slash_command(name="challenge")
+    @slash_command(name="challenge", description="Challenge someone to a battle!")
     @slash_option(
         name="opponent",
         description="Challenge someone to a battle!",
